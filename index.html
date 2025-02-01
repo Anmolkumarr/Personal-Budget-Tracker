@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Budget Tracker</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            background: linear-gradient(to right, #74ebd5, #acb6e5);
+            color: #333;
+        }
+        header {
+            text-align: center;
+            background: linear-gradient(to right, #007bff, #0056b3);
+            color: white;
+            padding: 15px 0;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 8px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        nav a {
+            margin: 0 15px;
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+        }
+        h2 {
+            color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background: linear-gradient(to right, #007bff, #0056b3);
+            color: white;
+        }
+        button {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: 0.3s;
+            border: none;
+        }
+        .add-btn {
+            background-color: #28a745;
+            color: white;
+        }
+        .add-btn:hover {
+            background-color: #218838;
+        }
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+        .edit-btn {
+            background-color: #ffc107;
+            color: black;
+        }
+        .edit-btn:hover {
+            background-color: #e0a800;
+        }
+        input, select {
+            padding: 8px;
+            margin: 5px 0;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Personal Budget Tracker
+        <nav>
+            <a href="#add-entry">Add Entry</a> |
+            <a href="#budget-summary">Budget Summary</a>
+        </nav>
+    </header>
+    
+    <section id="add-entry">
+        <h2>Add New Income or Expense</h2>
+        <form id="budget-form">
+            <label>Amount:</label>
+            <input type="number" id="amount" required><br>
+            
+            <label>Category:</label>
+            <select id="category">
+                <option value="food">Food</option>
+                <option value="transportation">Transportation</option>
+                <option value="salary">Salary</option>
+                <option value="utilities">Utilities</option>
+            </select><br>
+            
+            <label>Description:</label>
+            <input type="text" id="description"><br>
+            
+            <label>Date:</label>
+            <input type="date" id="date" required><br>
+            
+            <label>Type:</label>
+            <input type="radio" name="type" value="Income" id="income" required> Income
+            <input type="radio" name="type" value="Expense" id="expense" required> Expense<br>
+            
+            <label>Status:</label>
+            <select id="status">
+                <option value="Completed">Completed</option>
+                <option value="Pending">Pending</option>
+            </select><br>
+            
+            <button type="button" class="add-btn" onclick="addEntry()">Add Entry</button>
+        </form>
+    </section>
+    
+    <section id="budget-summary">
+        <h2>Budget Summary</h2>
+        <p>Total Income: <span id="total-income">$0</span></p>
+        <p>Total Expense: <span id="total-expense">$0</span></p>
+        <table id="budget-table">
+            <tr>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </table>
+    </section>
+    
+    <footer>
+        Personal Budget Tracker - Version 2.1
+    </footer>
+    
+    <script>
+        function addEntry() {
+            let table = document.getElementById("budget-table");
+            let amount = parseFloat(document.getElementById("amount").value);
+            let category = document.getElementById("category").value;
+            let description = document.getElementById("description").value;
+            let date = document.getElementById("date").value;
+            let type = document.querySelector('input[name="type"]:checked').value;
+            let status = document.getElementById("status").value;
+            
+            if (!amount || !date) {
+                alert("Please enter all required fields!");
+                return;
+            }
+            
+            let row = table.insertRow(-1);
+            row.innerHTML = `<td>${category}</td><td>${amount}</td><td>${description}</td><td>${date}</td><td>${type}</td><td>${status}</td><td><button class='edit-btn' onclick='editRow(this)'>Edit</button> <button class='delete-btn' onclick='deleteRow(this)'>Delete</button></td>`;
+            
+            updateSummary(amount, type);
+        }
+        
+        function updateSummary(amount, type) {
+            let incomeSpan = document.getElementById("total-income");
+            let expenseSpan = document.getElementById("total-expense");
+            if (type === "Income") {
+                incomeSpan.textContent = `$${(parseFloat(incomeSpan.textContent.slice(1)) + amount).toFixed(2)}`;
+            } else {
+                expenseSpan.textContent = `$${(parseFloat(expenseSpan.textContent.slice(1)) + amount).toFixed(2)}`;
+            }
+        }
+    </script>
+</body>
+</html>
